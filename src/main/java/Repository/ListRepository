@@ -1,0 +1,70 @@
+package repository;
+
+import model.List;
+import util.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List as JavaList;
+
+public class ListRepository {
+
+    public void insert(List list) {
+        String sql = "INSERT INTO lists (name, creation_date, user_id) VALUES (?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, list.getName());
+            stmt.setDate(2, Date.valueOf(list.getCreationDate()));
+            stmt.setInt(3, list.getUserId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(List list) {
+        String sql = "UPDATE lists SET name = ?, creation_date = ?, user_id = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, list.getName());
+            stmt.setDate(2, Date.valueOf(list.getCreationDate()));
+            stmt.setInt(3, list.getUserId());
+            stmt.setInt(4, list.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int id) {
+        String sql = "DELETE FROM lists WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JavaList<List> getAll() {
+        JavaList<List> lists = new ArrayList<>();
+        String sql = "SELECT * FROM lists";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                List list = new List(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getDate("creation_date").toLocalDate(),
+                    rs.getInt("user_id")
+                );
+                lists.add(list);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lists;
+    }
+}
