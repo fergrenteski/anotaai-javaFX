@@ -2,7 +2,7 @@ package com.pucpr.anotaai.model;
 
 import java.time.LocalDate;
 
-public class Usuario {
+public class User {
 
     private String nome;
     private String biografia;
@@ -10,9 +10,9 @@ public class Usuario {
     private String email;
     private LocalDate dataNascimento;
 
-    public Usuario() {}
+    public User() {}
 
-    public Usuario(String nome, String biografia, String cpf, String email, LocalDate dataNascimento) {
+    public User(String nome, String biografia, String cpf, String email, LocalDate dataNascimento) {
         this.nome = nome;
         this.biografia = biografia;
         this.cpf = cpf;
