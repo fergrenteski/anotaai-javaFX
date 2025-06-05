@@ -8,10 +8,10 @@ public class Local implements Serializable {
     private String endereco;
     private String cidade;
     private String estado;
-    private Integer cep;
-    private Integer telefone;
+    private String cep;
+    private String telefone;
 
-    public Local(int id, String nome, String endereco, String cidade, String estado, Integer cep, Integer telefone) {
+    public Local(int id, String nome, String endereco, String cidade, String estado, String cep, String telefone) {
         this.id = id;
         this.nome = nome;
         this.endereco = endereco;
@@ -57,19 +57,19 @@ public class Local implements Serializable {
         this.estado = estado;
     }
 
-    public Integer getCep() {
+    public String getCep() {
         return cep;
     }
 
-    public void setCep(Integer cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 
-    public Integer getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Integer telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 }
