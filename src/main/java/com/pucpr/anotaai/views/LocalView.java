@@ -40,8 +40,6 @@ public class LocalView {
         TableColumn<Local, String> telefoneCol = new TableColumn<>("Telefone");
         telefoneCol.setCellValueFactory(new PropertyValueFactory<>("telefone"));
 
-
-
         // Coluna Editar
         TableColumn<Local, Void> editarCol = new TableColumn<>("Editar");
         editarCol.setCellFactory(_ -> new TableCell<>() {
@@ -103,17 +101,47 @@ public class LocalView {
         TextField enderecoField = new TextField(local != null ? local.getEndereco() : "");
         TextField cidadeField = new TextField(local != null ? local.getCidade() : "");
         TextField estadoField = new TextField(local != null ? local.getEstado() : "");
-        TextField cepField = new TextField(local != null && local.getCep() != null ? local.getCep().toString() : "");
-        TextField telefoneField = new TextField(local != null && local.getTelefone() != null ? local.getTelefone().toString() : "");
+        TextField cepField = new TextField(local != null ? local.getCep() : "");
+        TextField telefoneField = new TextField(local != null ? local.getTelefone() : "");
+
+        // Máscara simples: permite apenas números
+        cepField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d{0,8}")) {
+                cepField.setText(oldVal);
+            }
+        });
+
+        telefoneField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d{0,11}")) {
+                telefoneField.setText(oldVal);
+            }
+        });
 
         Button salvarBtn = new Button("Salvar");
         salvarBtn.setOnAction(_ -> {
             try {
-                // Monta a mensagem da confirmação dinamicamente
-                String nomeLocal = nomeField.getText();
+                String nome = nomeField.getText().trim();
+                String endereco = enderecoField.getText().trim();
+                String cidade = cidadeField.getText().trim();
+                String estado = estadoField.getText().trim();
+                String cep = cepField.getText().trim();
+                String telefone = telefoneField.getText().trim();
+
+                if (nome.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
+                    throw new IllegalArgumentException("Nome, cidade e estado são obrigatórios.");
+                }
+
+                if (!cep.matches("\\d{8}")) {
+                    throw new IllegalArgumentException("CEP deve conter exatamente 8 dígitos.");
+                }
+
+                if (!telefone.matches("\\d{10,11}")) {
+                    throw new IllegalArgumentException("Telefone deve conter 10 ou 11 dígitos.");
+                }
+
                 String mensagem = (local == null)
-                        ? "Tem certeza que deseja salvar o local '" + nomeLocal + "'?"
-                        : "Tem certeza que deseja atualizar o local '" + nomeLocal + "'?";
+                        ? "Tem certeza que deseja salvar o local '" + nome + "'?"
+                        : "Tem certeza que deseja atualizar o local '" + nome + "'?";
 
                 ModalConfirmacao.mostrar(
                         "Confirmação",
@@ -121,25 +149,16 @@ public class LocalView {
                         () -> {
                             if (local == null) {
                                 int id = localService.gerarNovoId();
-                                Local novo = new Local(
-                                        id,
-                                        nomeField.getText(),
-                                        enderecoField.getText(),
-                                        cidadeField.getText(),
-                                        estadoField.getText(),
-                                        Integer.parseInt(cepField.getText()),
-                                        Integer.parseInt(telefoneField.getText())
-                                );
+                                Local novo = new Local(id, nome, endereco, cidade, estado, cep, telefone);
                                 locais.add(novo);
                                 localService.adicionar(novo);
                             } else {
-                                local.setNome(nomeField.getText());
-                                local.setEndereco(enderecoField.getText());
-                                local.setCidade(cidadeField.getText());
-                                local.setEstado(estadoField.getText());
-                                local.setCep(Integer.parseInt(cepField.getText()));
-                                local.setTelefone(Integer.parseInt(telefoneField.getText()));
-                                // Força a atualização na tabela
+                                local.setNome(nome);
+                                local.setEndereco(endereco);
+                                local.setCidade(cidade);
+                                local.setEstado(estado);
+                                local.setCep(cep);
+                                local.setTelefone(telefone);
                                 int index = locais.indexOf(local);
                                 locais.set(index, local);
                                 localService.atualizar(local);
@@ -147,9 +166,10 @@ public class LocalView {
                             modal.close();
                         }
                 );
+
             } catch (Exception ex) {
                 ex.printStackTrace();
-                new Alert(Alert.AlertType.ERROR, "Erro ao salvar: " + ex.getMessage()).show();
+                new Alert(Alert.AlertType.ERROR, "Erro: " + ex.getMessage()).show();
             }
         });
 
@@ -158,13 +178,13 @@ public class LocalView {
                 new Label("Endereço:"), enderecoField,
                 new Label("Cidade:"), cidadeField,
                 new Label("Estado:"), estadoField,
-                new Label("CEP:"), cepField,
-                new Label("Telefone:"), telefoneField,
+                new Label("CEP (somente números, 8 dígitos):"), cepField,
+                new Label("Telefone (somente números, 10 ou 11 dígitos):"), telefoneField,
                 salvarBtn
         );
         form.setPadding(new Insets(20));
 
-        modal.setScene(new Scene(form, 300, 450));
+        modal.setScene(new Scene(form, 320, 480));
         modal.showAndWait();
     }
 }
