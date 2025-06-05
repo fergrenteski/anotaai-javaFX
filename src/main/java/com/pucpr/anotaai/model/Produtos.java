@@ -2,6 +2,7 @@ package com.pucpr.anotaai.model;
 
 public class Produtos {
 
+    private int id;
     private String nome;
     private String descricao;
     private String categoria;
@@ -10,7 +11,8 @@ public class Produtos {
 
     //enum
 
-    public Produtos(String nome, String descricao, String categoria, double preco, int quantidade) {
+    public Produtos(int id,String nome, String descricao, String categoria, double preco, int quantidade) {
+        this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.categoria = categoria;
@@ -18,6 +20,7 @@ public class Produtos {
         this.quantidade = quantidade;
     }
 
+    public int getId() {return id;}
     // Nome
     public String getNome() {return nome;}
     public void setNome(String nome) {this.nome = nome;}
@@ -37,6 +40,7 @@ public class Produtos {
     // Quantidade
     public int getQuantidade() {return quantidade;}
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
+
 }
 
 
