@@ -18,38 +18,30 @@ import javafx.util.Callback;
 
 public class ProdutoView {
 
-    // Mantém a lista observável de produtos
     private final ObservableList<Produtos> produtos = FXCollections.observableArrayList();
     private final ProductRepository productRepository = new ProductRepository();
     private final ProductService productService = new ProductService(productRepository);
 
     public void start(Stage stage) {
-        // Carrega todos os produtos existentes no início
         produtos.setAll(productService.listar());
 
         TableView<Produtos> tableView = new TableView<>(produtos);
 
-        // Coluna “Nome”
         TableColumn<Produtos, String> nomeCol = new TableColumn<>("Nome");
         nomeCol.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        // Coluna “Descrição”
         TableColumn<Produtos, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 
-        // Coluna “Categoria”
         TableColumn<Produtos, String> categoriaCol = new TableColumn<>("Categoria");
         categoriaCol.setCellValueFactory(new PropertyValueFactory<>("categoria"));
 
-        // Coluna “Preço”
         TableColumn<Produtos, Double> precoCol = new TableColumn<>("Preço");
         precoCol.setCellValueFactory(new PropertyValueFactory<>("preco"));
 
-        // Coluna “Quantidade”
         TableColumn<Produtos, Integer> quantidadeCol = new TableColumn<>("Quantidade");
         quantidadeCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
 
-        // Coluna “Editar”
         TableColumn<Produtos, Void> editarCol = new TableColumn<>("Editar");
         editarCol.setMinWidth(80);
         editarCol.setCellFactory(new Callback<>() {
@@ -75,7 +67,6 @@ public class ProdutoView {
             }
         });
 
-        // Coluna “Excluir”
         TableColumn<Produtos, Void> excluirCol = new TableColumn<>("Excluir");
         excluirCol.setMinWidth(80);
         excluirCol.setCellFactory(new Callback<>() {
@@ -87,8 +78,8 @@ public class ProdutoView {
                     {
                         btnExcluir.setOnAction(_e -> {
                             Produtos produtoSelecionado = getTableView().getItems().get(getIndex());
-                            productService.remover(produtoSelecionado); // remove do repositório
-                            produtos.remove(produtoSelecionado);       // remove da lista exibida
+                            productService.remover(produtoSelecionado);
+                            produtos.remove(produtoSelecionado);
                         });
                         btnExcluir.setMaxWidth(Double.MAX_VALUE);
                     }
@@ -102,7 +93,6 @@ public class ProdutoView {
             }
         });
 
-        // Adiciona todas as colunas na tabela
         tableView.getColumns().addAll(
                 nomeCol,
                 descricaoCol,
@@ -113,11 +103,9 @@ public class ProdutoView {
                 excluirCol
         );
 
-        // Botão “Adicionar” (abre o formulário em branco)
         Button adicionar = new Button("Adicionar");
         adicionar.setOnAction(e -> formProduct(null));
 
-        // Botão “Voltar” (fecha a janela atual)
         Button voltar = new Button("Voltar");
         voltar.setOnAction(e -> stage.close());
 
@@ -159,14 +147,11 @@ public class ProdutoView {
         Label labQuantidade = new Label("Quantidade:");
         TextField txtQuantidade = new TextField( produto != null ? String.valueOf(produto.getQuantidade()) : "" );
 
-        // Botão “Voltar” (fecha o formulário sem salvar)
         Button btnVoltar = new Button("Voltar");
         btnVoltar.setOnAction(e -> stage.close());
 
-        // Botão “Salvar”
         Button btnSalvar = new Button("Salvar");
         btnSalvar.setOnAction(e -> {
-            // Validações e conversões básicas
             String nomeStr      = txtNome.getText().trim();
             String descStr      = txtDescricao.getText().trim();
             String categStr     = txtCategoria.getText().trim();
