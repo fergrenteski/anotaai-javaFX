@@ -16,7 +16,7 @@ public class ProductRepository {
         }
     }
 
-    public List<Produtos> carregarProdutos() {
+    public List<Produtos> carregar() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
             return (List<Produtos>) ois.readObject();
         }

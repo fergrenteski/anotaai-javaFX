@@ -14,154 +14,208 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class ProdutoView {
 
-    // ObservableList que alimenta a TableView
+    // Mantém a lista observável de produtos
     private final ObservableList<Produtos> produtos = FXCollections.observableArrayList();
-
-    // Repository e Service (que persiste em TXT)
     private final ProductRepository productRepository = new ProductRepository();
     private final ProductService productService = new ProductService(productRepository);
 
     public void start(Stage stage) {
-        Label header = new Label("Lista de Produtos");
-        header.setAlignment(Pos.CENTER);
-        header.setMaxWidth(Double.MAX_VALUE);
-        header.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        // Carrega todos os produtos existentes no início
+        produtos.setAll(productService.listar());
 
-        // 1) Cria a TableView e define as colunas
-        TableView<Produtos> table = new TableView<>();
-        table.setItems(produtos); // vincula a ObservableList à tabela
+        TableView<Produtos> tableView = new TableView<>(produtos);
 
+        // Coluna “Nome”
         TableColumn<Produtos, String> nomeCol = new TableColumn<>("Nome");
         nomeCol.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
+        // Coluna “Descrição”
         TableColumn<Produtos, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 
+        // Coluna “Categoria”
         TableColumn<Produtos, String> categoriaCol = new TableColumn<>("Categoria");
         categoriaCol.setCellValueFactory(new PropertyValueFactory<>("categoria"));
 
+        // Coluna “Preço”
         TableColumn<Produtos, Double> precoCol = new TableColumn<>("Preço");
         precoCol.setCellValueFactory(new PropertyValueFactory<>("preco"));
 
+        // Coluna “Quantidade”
         TableColumn<Produtos, Integer> quantidadeCol = new TableColumn<>("Quantidade");
         quantidadeCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
 
-        table.getColumns().addAll(nomeCol, descricaoCol, categoriaCol, precoCol, quantidadeCol);
+        // Coluna “Editar”
+        TableColumn<Produtos, Void> editarCol = new TableColumn<>("Editar");
+        editarCol.setMinWidth(80);
+        editarCol.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<Produtos, Void> call(final TableColumn<Produtos, Void> param) {
+                return new TableCell<>() {
+                    private final Button btnEditar = new Button("✏️");
 
-        // 2) Carrega itens já existentes do TXT via service
-        produtos.setAll(productService.listar());
+                    {
+                        btnEditar.setOnAction(_e -> {
+                            Produtos produtoSelecionado = getTableView().getItems().get(getIndex());
+                            formProduct(produtoSelecionado);
+                        });
+                        btnEditar.setMaxWidth(Double.MAX_VALUE);
+                    }
 
-        // 3) Botões “Voltar” e “Criar Produto”
-        Button btnVoltar = new Button("Voltar");
-        Button btnCriar = new Button("Criar Produto");
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic(empty ? null : btnEditar);
+                    }
+                };
+            }
+        });
 
-        btnVoltar.setOnAction(e -> stage.close());
-        btnCriar.setOnAction(e -> form(null, table));
+        // Coluna “Excluir”
+        TableColumn<Produtos, Void> excluirCol = new TableColumn<>("Excluir");
+        excluirCol.setMinWidth(80);
+        excluirCol.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<Produtos, Void> call(final TableColumn<Produtos, Void> param) {
+                return new TableCell<>() {
+                    private final Button btnExcluir = new Button("🗑️");
 
-        // 4) Barra de botões, alinhada à direita
-        HBox buttonBar = new HBox(10);
-        buttonBar.setPadding(new Insets(0, 0, 10, 0));
-        buttonBar.setAlignment(Pos.CENTER_RIGHT);
-        buttonBar.getChildren().addAll(btnCriar, btnVoltar);
+                    {
+                        btnExcluir.setOnAction(_e -> {
+                            Produtos produtoSelecionado = getTableView().getItems().get(getIndex());
+                            productService.remover(produtoSelecionado); // remove do repositório
+                            produtos.remove(produtoSelecionado);       // remove da lista exibida
+                        });
+                        btnExcluir.setMaxWidth(Double.MAX_VALUE);
+                    }
 
-        // 5) Layout principal
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.getChildren().addAll(header, table, buttonBar);
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic(empty ? null : btnExcluir);
+                    }
+                };
+            }
+        });
 
-        stage.setScene(new Scene(layout, 600, 400));
+        // Adiciona todas as colunas na tabela
+        tableView.getColumns().addAll(
+                nomeCol,
+                descricaoCol,
+                categoriaCol,
+                precoCol,
+                quantidadeCol,
+                editarCol,
+                excluirCol
+        );
+
+        // Botão “Adicionar” (abre o formulário em branco)
+        Button adicionar = new Button("Adicionar");
+        adicionar.setOnAction(e -> formProduct(null));
+
+        // Botão “Voltar” (fecha a janela atual)
+        Button voltar = new Button("Voltar");
+        voltar.setOnAction(e -> stage.close());
+
+        HBox hBoxBotoes = new HBox(10, adicionar, voltar);
+        hBoxBotoes.setAlignment(Pos.CENTER_RIGHT);
+        hBoxBotoes.setPadding(new Insets(10, 0, 0, 0));
+
+        // Cabeçalho da lista de produtos
+        Label label = new Label("Lista de Produtos:");
+        label.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+
+        // Layout principal da janela
+        VBox vboxPrincipal = new VBox(10, label, tableView, hBoxBotoes);
+        vboxPrincipal.setPadding(new Insets(10));
+        stage.setScene(new Scene(vboxPrincipal, 700, 500));
         stage.setTitle("Produtos");
         stage.show();
     }
 
-    /**
-     * Abre um formulário modal para cadastro ou edição de produto.
-     * Ao clicar em "Salvar", cria/atualiza um Produtos e persiste via ProductService (TXT).
-     * Não há validação de campos.
-     */
-    private void form(Produtos produto, TableView<Produtos> table) {
-        Stage formStage = new Stage();
-        formStage.initModality(Modality.APPLICATION_MODAL);
-        formStage.setTitle(produto == null ? "Novo Produto" : "Editar Produto");
+    // ---
+    private void formProduct(Produtos produto) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle(produto == null ? "Novo Produto" : "Editar Produto");
 
-        // Campos de texto
-        Label lblNome = new Label("Nome:");
-        TextField tfNome = new TextField(produto != null ? produto.getNome() : "");
+        // Labels e campos de texto
+        Label labNome      = new Label("Nome:");
+        TextField txtNome      = new TextField( produto != null ? produto.getNome() : "" );
 
-        Label lblDescricao = new Label("Descrição:");
-        TextField tfDescricao = new TextField(produto != null ? produto.getDescricao() : "");
+        Label labDescricao = new Label("Descrição:");
+        TextField txtDescricao = new TextField( produto != null ? produto.getDescricao() : "" );
 
-        Label lblCategoria = new Label("Categoria:");
-        TextField tfCategoria = new TextField(produto != null ? produto.getCategoria() : "");
+        Label labCategoria = new Label("Categoria:");
+        TextField txtCategoria = new TextField( produto != null ? produto.getCategoria() : "" );
 
-        Label lblPreco = new Label("Preço:");
-        TextField tfPreco = new TextField(produto != null ? String.valueOf(produto.getPreco()) : "");
+        Label labPreco     = new Label("Preço:");
+        TextField txtPreco     = new TextField( produto != null ? String.valueOf(produto.getPreco()) : "" );
 
-        Label lblQuantidade = new Label("Quantidade:");
-        TextField tfQuantidade = new TextField(produto != null ? String.valueOf(produto.getQuantidade()) : "");
+        Label labQuantidade = new Label("Quantidade:");
+        TextField txtQuantidade = new TextField( produto != null ? String.valueOf(produto.getQuantidade()) : "" );
 
+        // Botão “Voltar” (fecha o formulário sem salvar)
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setOnAction(e -> stage.close());
+
+        // Botão “Salvar”
         Button btnSalvar = new Button("Salvar");
-        Button btnCancelar = new Button("Cancelar");
-
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(15));
-        root.getChildren().addAll(
-                lblNome, tfNome,
-                lblDescricao, tfDescricao,
-                lblCategoria, tfCategoria,
-                lblPreco, tfPreco,
-                lblQuantidade, tfQuantidade
-        );
-
-        // HBox para os botões, alinhado à direita
-        HBox buttonBarForm = new HBox(10);
-        buttonBarForm.setPadding(new Insets(10, 0, 0, 0));
-        buttonBarForm.setAlignment(Pos.CENTER_RIGHT);
-        buttonBarForm.getChildren().addAll(btnSalvar, btnCancelar);
-        root.getChildren().add(buttonBarForm);
-
-        // Ação do botão “Salvar”
         btnSalvar.setOnAction(e -> {
-            String nome      = tfNome.getText();
-            String descricao = tfDescricao.getText();
-            String categoria = tfCategoria.getText();
-            double preco     = Double.parseDouble(tfPreco.getText());
-            int quantidade   = Integer.parseInt(tfQuantidade.getText());
+            // Validações e conversões básicas
+            String nomeStr      = txtNome.getText().trim();
+            String descStr      = txtDescricao.getText().trim();
+            String categStr     = txtCategoria.getText().trim();
+            String precoStr     = txtPreco.getText().trim();
+            String qtdStr       = txtQuantidade.getText().trim();
 
             if (produto == null) {
-                // Novo produto: gera ID via ProductService e adiciona
                 int id = productService.gerarNovoId();
-                Produtos novo = new Produtos(id, nome, descricao, categoria, preco, quantidade);
-                productService.adicionar(novo);  // Persiste em "produtos.txt"
+                Produtos novo = new Produtos(
+                        id,
+                        nomeStr,
+                        descStr,
+                        categStr,
+                        Double.parseDouble(precoStr),
+                        Integer.parseInt(qtdStr)
+                );
+                productService.adicionar(novo);
                 produtos.add(novo);
             } else {
-                // Edição: atualiza campos e persiste
-                produto.setNome(nome);
-                produto.setDescricao(descricao);
-                produto.setCategoria(categoria);
-                produto.setPreco(preco);
-                produto.setQuantidade(quantidade);
-                productService.atualizar(produto);  // Atualiza em "produtos.txt"
+                produto.setNome(nomeStr);
+                produto.setDescricao(descStr);
+                produto.setCategoria(categStr);
+                produto.setPreco(Double.parseDouble(precoStr));
+                produto.setQuantidade(Integer.parseInt(qtdStr));
 
-                // Atualiza a ObservableList
-                int index = produtos.indexOf(produto);
-                if (index >= 0) {
-                    produtos.set(index, produto);
-                }
+                productService.atualizar(produto);
+                int idx = produtos.indexOf(produto);
+                produtos.set(idx, produto);
             }
-
-            // Garante que a tabela reflita as mudanças
-            table.refresh();
-            formStage.close();
+            stage.close();
         });
 
-        btnCancelar.setOnAction(e -> formStage.close());
+        VBox vbox = new VBox(8,
+                labNome, txtNome,
+                labDescricao, txtDescricao,
+                labCategoria, txtCategoria,
+                labPreco, txtPreco,
+                labQuantidade, txtQuantidade
+        );
+        vbox.setPadding(new Insets(10));
 
-        formStage.setScene(new Scene(root, 600, 400));
-        formStage.showAndWait();
+        HBox hbox = new HBox(10, btnSalvar, btnVoltar);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(10, 0, 0, 0));
+
+        VBox form = new VBox(10, vbox, hbox);
+        form.setPadding(new Insets(10));
+
+        stage.setScene(new Scene(form, 350, 400));
+        stage.showAndWait();
     }
 }

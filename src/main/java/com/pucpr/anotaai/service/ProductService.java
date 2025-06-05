@@ -12,10 +12,12 @@ public class ProductService {
 
     public ProductService(ProductRepository repository) {
         this.repository = repository;
-        this.produtos = new ArrayList<>(repository.carregarProdutos());
+        this.produtos = new ArrayList<>(repository.carregar());
     }
 
     public List<Produtos> listar() {
+        System.out.println("Listando...");
+        System.out.println(produtos);
         return produtos;
     }
 
