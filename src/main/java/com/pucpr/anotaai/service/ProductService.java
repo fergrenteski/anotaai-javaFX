@@ -12,20 +12,31 @@ public class ProductService {
 
     public ProductService(ProductRepository repository) {
         this.repository = repository;
+        // Carrega tudo que existe em disco, para trabalhar em memória
         this.produtos = new ArrayList<>(repository.carregar());
     }
 
+    /**
+     * Retorna uma cópia da lista de produtos (para que a lista interna não seja alterada fora do Service).
+     */
     public List<Produtos> listar() {
-        System.out.println("Listando...");
-        System.out.println(produtos);
-        return produtos;
+        return new ArrayList<>(produtos);
     }
 
+    /**
+     * Adiciona um novo produto.
+     * Atenção: o objeto Produtos que entrar aqui
+     * já deve ter o ID definido (pode chamar gerarNovoId() antes de montar o objeto).
+     */
     public void adicionar(Produtos produto) {
         produtos.add(produto);
         repository.salvar(produtos);
     }
 
+    /**
+     * Atualiza um produto existente (identificado pelo mesmo ID).
+     * Substitui o objeto na lista em memória e salva tudo em disco.
+     */
     public void atualizar(Produtos atualizado) {
         for (int i = 0; i < produtos.size(); i++) {
             if (produtos.get(i).getId() == atualizado.getId()) {
@@ -36,11 +47,18 @@ public class ProductService {
         repository.salvar(produtos);
     }
 
+    /**
+     * Remove o produto (objeto igual ou que possua o mesmo ID) da lista em memória e persiste em disco.
+     */
     public void remover(Produtos produto) {
         produtos.remove(produto);
         repository.salvar(produtos);
     }
 
+    /**
+     * Gera um novo ID, baseado no maior ID atual + 1.
+     * Se não houver nenhum produto, retorna 1.
+     */
     public int gerarNovoId() {
         return produtos.stream()
                 .mapToInt(Produtos::getId)

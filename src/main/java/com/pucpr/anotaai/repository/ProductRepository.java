@@ -7,20 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository {
+
+    // Arquivo onde a lista de produtos será serializada
     private final File arquivo = new File("upload/produtos.txt");
 
     public ProductRepository() {
+        // Garante que a pasta "upload" exista
         File dir = new File("upload");
         if (!dir.exists()) {
             dir.mkdirs();
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<Produtos> carregar() {
+        if (!arquivo.exists()) {
+            // Se não existir ainda, retorna lista vazia
+            return new ArrayList<>();
+        }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
             return (List<Produtos>) ois.readObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
