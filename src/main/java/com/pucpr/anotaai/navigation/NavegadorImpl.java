@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 public class NavegadorImpl implements Navegador {
     public void abrirUsuario() {
-        new UsuarioView().start(new Stage());
+        new UserView().start(new Stage());
     }
 
     public void abrirGrupo() {

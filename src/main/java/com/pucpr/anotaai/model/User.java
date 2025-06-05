@@ -1,23 +1,29 @@
 package com.pucpr.anotaai.model;
 
-import java.time.LocalDate;
 
-public class Usuario {
+import java.io.Serializable;
 
+public class User implements Serializable {
+    private int id;
     private String nome;
     private String biografia;
     private String cpf;
     private String email;
-    private LocalDate dataNascimento;
+    private String dataNascimento;
 
-    public Usuario() {}
+    public User() {}
 
-    public Usuario(String nome, String biografia, String cpf, String email, LocalDate dataNascimento) {
+    public User(int id, String nome, String biografia, String cpf, String email, String dataNascimento) {
+        this.id = id;
         this.nome = nome;
         this.biografia = biografia;
         this.cpf = cpf;
         this.email = email;
         this.dataNascimento = dataNascimento;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNome() { return nome; }
@@ -32,6 +38,6 @@ public class Usuario {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+    public String getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(String dataNascimento) { this.dataNascimento = dataNascimento; }
 }
