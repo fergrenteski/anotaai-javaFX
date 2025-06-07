@@ -1,6 +1,6 @@
 package com.pucpr.anotaai.service;
 
-import com.pucpr.anotaai.model.Produtos;
+import com.pucpr.anotaai.model.Produto;
 import com.pucpr.anotaai.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProductService {
     private final ProductRepository repository;
-    private final List<Produtos> produtos;
+    private final List<Produto> produtos;
 
     public ProductService(ProductRepository repository) {
         this.repository = repository;
@@ -19,16 +19,16 @@ public class ProductService {
     /**
      * Retorna uma cópia da lista de produtos (para que a lista interna não seja alterada fora do Service).
      */
-    public List<Produtos> listar() {
+    public List<Produto> listar() {
         return new ArrayList<>(produtos);
     }
 
     /**
      * Adiciona um novo produto.
-     * Atenção: o objeto Produtos que entrar aqui
+     * Atenção: o objeto Produto que entrar aqui
      * já deve ter o ID definido (pode chamar gerarNovoId() antes de montar o objeto).
      */
-    public void adicionar(Produtos produto) {
+    public void adicionar(Produto produto) {
         produtos.add(produto);
         repository.salvar(produtos);
     }
@@ -37,7 +37,7 @@ public class ProductService {
      * Atualiza um produto existente (identificado pelo mesmo ID).
      * Substitui o objeto na lista em memória e salva tudo em disco.
      */
-    public void atualizar(Produtos atualizado) {
+    public void atualizar(Produto atualizado) {
         for (int i = 0; i < produtos.size(); i++) {
             if (produtos.get(i).getId() == atualizado.getId()) {
                 produtos.set(i, atualizado);
@@ -50,7 +50,7 @@ public class ProductService {
     /**
      * Remove o produto (objeto igual ou que possua o mesmo ID) da lista em memória e persiste em disco.
      */
-    public void remover(Produtos produto) {
+    public void remover(Produto produto) {
         produtos.remove(produto);
         repository.salvar(produtos);
     }
@@ -61,7 +61,7 @@ public class ProductService {
      */
     public int gerarNovoId() {
         return produtos.stream()
-                .mapToInt(Produtos::getId)
+                .mapToInt(Produto::getId)
                 .max()
                 .orElse(0) + 1;
     }

@@ -1,6 +1,6 @@
 package com.pucpr.anotaai.repository;
 
-import com.pucpr.anotaai.model.Produtos;
+import com.pucpr.anotaai.model.Produto;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,20 +20,20 @@ public class ProductRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Produtos> carregar() {
+    public List<Produto> carregar() {
         if (!arquivo.exists()) {
             // Se não existir ainda, retorna lista vazia
             return new ArrayList<>();
         }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
-            return (List<Produtos>) ois.readObject();
+            return (List<Produto>) ois.readObject();
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
-    public void salvar(List<Produtos> produtos) {
+    public void salvar(List<Produto> produtos) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             oos.writeObject(produtos);
         } catch (IOException e) {

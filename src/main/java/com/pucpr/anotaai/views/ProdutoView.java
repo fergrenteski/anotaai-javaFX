@@ -1,6 +1,6 @@
 package com.pucpr.anotaai.views;
 
-import com.pucpr.anotaai.model.Produtos;
+import com.pucpr.anotaai.model.Produto;
 import com.pucpr.anotaai.repository.ProductRepository;
 import com.pucpr.anotaai.service.ProductService;
 import javafx.collections.FXCollections;
@@ -18,41 +18,41 @@ import javafx.util.Callback;
 
 public class ProdutoView {
 
-    private final ObservableList<Produtos> produtos = FXCollections.observableArrayList();
+    private final ObservableList<Produto> produtos = FXCollections.observableArrayList();
     private final ProductRepository productRepository = new ProductRepository();
     private final ProductService productService = new ProductService(productRepository);
 
     public void start(Stage stage) {
         produtos.setAll(productService.listar());
 
-        TableView<Produtos> tableView = new TableView<>(produtos);
+        TableView<Produto> tableView = new TableView<>(produtos);
 
-        TableColumn<Produtos, String> nomeCol = new TableColumn<>("Nome");
+        TableColumn<Produto, String> nomeCol = new TableColumn<>("Nome");
         nomeCol.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        TableColumn<Produtos, String> descricaoCol = new TableColumn<>("Descrição");
+        TableColumn<Produto, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 
-        TableColumn<Produtos, String> categoriaCol = new TableColumn<>("Categoria");
+        TableColumn<Produto, String> categoriaCol = new TableColumn<>("Categoria");
         categoriaCol.setCellValueFactory(new PropertyValueFactory<>("categoria"));
 
-        TableColumn<Produtos, Double> precoCol = new TableColumn<>("Preço");
+        TableColumn<Produto, Double> precoCol = new TableColumn<>("Preço");
         precoCol.setCellValueFactory(new PropertyValueFactory<>("preco"));
 
-        TableColumn<Produtos, Integer> quantidadeCol = new TableColumn<>("Quantidade");
+        TableColumn<Produto, Integer> quantidadeCol = new TableColumn<>("Quantidade");
         quantidadeCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
 
-        TableColumn<Produtos, Void> editarCol = new TableColumn<>("Editar");
+        TableColumn<Produto, Void> editarCol = new TableColumn<>("Editar");
         editarCol.setMinWidth(80);
         editarCol.setCellFactory(new Callback<>() {
             @Override
-            public TableCell<Produtos, Void> call(final TableColumn<Produtos, Void> param) {
+            public TableCell<Produto, Void> call(final TableColumn<Produto, Void> param) {
                 return new TableCell<>() {
                     private final Button btnEditar = new Button("✏️");
 
                     {
                         btnEditar.setOnAction(_e -> {
-                            Produtos produtoSelecionado = getTableView().getItems().get(getIndex());
+                            Produto produtoSelecionado = getTableView().getItems().get(getIndex());
                             formProduct(produtoSelecionado);
                         });
                         btnEditar.setMaxWidth(Double.MAX_VALUE);
@@ -67,17 +67,17 @@ public class ProdutoView {
             }
         });
 
-        TableColumn<Produtos, Void> excluirCol = new TableColumn<>("Excluir");
+        TableColumn<Produto, Void> excluirCol = new TableColumn<>("Excluir");
         excluirCol.setMinWidth(80);
         excluirCol.setCellFactory(new Callback<>() {
             @Override
-            public TableCell<Produtos, Void> call(final TableColumn<Produtos, Void> param) {
+            public TableCell<Produto, Void> call(final TableColumn<Produto, Void> param) {
                 return new TableCell<>() {
                     private final Button btnExcluir = new Button("🗑️");
 
                     {
                         btnExcluir.setOnAction(_e -> {
-                            Produtos produtoSelecionado = getTableView().getItems().get(getIndex());
+                            Produto produtoSelecionado = getTableView().getItems().get(getIndex());
                             productService.remover(produtoSelecionado);
                             produtos.remove(produtoSelecionado);
                         });
@@ -114,19 +114,19 @@ public class ProdutoView {
         hBoxBotoes.setPadding(new Insets(10, 0, 0, 0));
 
         // Cabeçalho da lista de produtos
-        Label label = new Label("Lista de Produtos:");
+        Label label = new Label("Lista de Produto:");
         label.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         // Layout principal da janela
         VBox vboxPrincipal = new VBox(10, label, tableView, hBoxBotoes);
         vboxPrincipal.setPadding(new Insets(10));
         stage.setScene(new Scene(vboxPrincipal, 700, 500));
-        stage.setTitle("Produtos");
+        stage.setTitle("Produto");
         stage.show();
     }
 
     // ---
-    private void formProduct(Produtos produto) {
+    private void formProduct(Produto produto) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle(produto == null ? "Novo Produto" : "Editar Produto");
@@ -160,7 +160,7 @@ public class ProdutoView {
 
             if (produto == null) {
                 int id = productService.gerarNovoId();
-                Produtos novo = new Produtos(
+                Produto novo = new Produto(
                         id,
                         nomeStr,
                         descStr,

@@ -25,7 +25,7 @@ public class MenuFactory {
         MenuItem listaItem = new MenuItem("Listas");
         listaItem.setOnAction(_ -> navegador.abrirLista());
 
-        MenuItem produtoItem = new MenuItem("Produtos");
+        MenuItem produtoItem = new MenuItem("Produto");
         produtoItem.setOnAction(_ -> navegador.abrirProduto());
 
         MenuItem localItem = new MenuItem("Locais");

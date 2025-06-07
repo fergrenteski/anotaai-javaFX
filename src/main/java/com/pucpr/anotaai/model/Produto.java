@@ -2,7 +2,7 @@ package com.pucpr.anotaai.model;
 
 import java.io.Serializable;
 
-public class Produtos implements Serializable {
+public class Produto implements Serializable {
     private int id;
     private String nome;
     private String descricao;
@@ -12,7 +12,7 @@ public class Produtos implements Serializable {
 
     //enum
 
-    public Produtos(int id,String nome, String descricao, String categoria, double preco, int quantidade) {
+    public Produto(int id, String nome, String descricao, String categoria, double preco, int quantidade) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
