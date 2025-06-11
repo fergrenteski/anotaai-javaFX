@@ -186,5 +186,14 @@ public class LocalView {
 
         modal.setScene(new Scene(form, 320, 480));
         modal.showAndWait();
+
+
+    }
+    private void exibirErro(String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro de Validação");
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }

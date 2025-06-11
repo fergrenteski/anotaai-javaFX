@@ -148,7 +148,30 @@ public class ProdutoView {
         TextField txtQuantidade = new TextField( produto != null ? String.valueOf(produto.getQuantidade()) : "" );
 
         Button btnVoltar = new Button("Voltar");
-        btnVoltar.setOnAction(e -> stage.close());
+        btnVoltar.setOnAction(e -> {
+            String nomeStr      = txtNome.getText().trim();
+            String descStr      = txtDescricao.getText().trim();
+            String categStr     = txtCategoria.getText().trim();
+            String precoStr     = txtPreco.getText().trim();
+            String qtdStr       = txtQuantidade.getText().trim();
+
+            // se algum estiver não vazio, pergunta antes de descartar
+            boolean anyFilled = !nomeStr.isEmpty()
+                    || !descStr.isEmpty()
+                    || !categStr.isEmpty()
+                    || !precoStr.isEmpty()
+                    || !qtdStr.isEmpty();
+
+            if (anyFilled) {
+                ModalConfirmacao.mostrar(
+                        "Atenção",
+                        "Deseja descartar as alterações?",
+                        () -> stage.close()
+                );
+            } else {
+                stage.close();
+            }
+        });
 
         Button btnSalvar = new Button("Salvar");
         btnSalvar.setOnAction(e -> {
@@ -158,30 +181,57 @@ public class ProdutoView {
             String precoStr     = txtPreco.getText().trim();
             String qtdStr       = txtQuantidade.getText().trim();
 
-            if (produto == null) {
-                int id = productService.gerarNovoId();
-                Produto novo = new Produto(
-                        id,
-                        nomeStr,
-                        descStr,
-                        categStr,
-                        Double.parseDouble(precoStr),
-                        Integer.parseInt(qtdStr)
-                );
-                productService.adicionar(novo);
-                produtos.add(novo);
-            } else {
-                produto.setNome(nomeStr);
-                produto.setDescricao(descStr);
-                produto.setCategoria(categStr);
-                produto.setPreco(Double.parseDouble(precoStr));
-                produto.setQuantidade(Integer.parseInt(qtdStr));
-
-                productService.atualizar(produto);
-                int idx = produtos.indexOf(produto);
-                produtos.set(idx, produto);
+            if (nomeStr.isEmpty() || descStr.isEmpty() || categStr.isEmpty() || precoStr.isEmpty() || qtdStr.isEmpty()) {
+                String msg =
+                        "Preencha o(s) campo(s): " + (nomeStr.isEmpty() ? "Nome" : "")
+                                + (descStr.isEmpty() ? (nomeStr.isEmpty() ? ", " : "") + "Descrição" : "")
+                                + (categStr.isEmpty() ? ((nomeStr.isEmpty() || descStr.isEmpty()) ? ", " : "") + "Categoria" : "")
+                                + (precoStr.isEmpty() ? ((nomeStr.isEmpty() || descStr.isEmpty() || categStr.isEmpty()) ? ", " : "") + "Preço" : "")
+                                + (qtdStr.isEmpty() ? ((nomeStr.isEmpty() || descStr.isEmpty() || categStr.isEmpty() || precoStr.isEmpty()) ? ", " : "") + "Quantidade" : "");
+                exibirErro(msg);
+                throw new IllegalArgumentException();
             }
-            stage.close();
+
+            if (Double.parseDouble(precoStr) <= 0 || Double.parseDouble(qtdStr) <= 0) {
+                String msg = "O(s) campo(s) precisam ser maior(es) que zero: "
+                        + (Double.parseDouble(precoStr) <= 0 ? "Preço" : "")
+                        + (Double.parseDouble(qtdStr) <= 0 ? (Double.parseDouble(precoStr) <= 0 ? ", Quantidade" : "Quantidade") : "");
+                exibirErro(msg);
+                throw new IllegalArgumentException();
+            }
+
+            String pergunta = produto == null
+                    ? "Tem certeza que deseja salvar o produto '" + nomeStr + "'?"
+                    : "Tem certeza que deseja atualizar o produto '" + nomeStr + "'?";
+
+            ModalConfirmacao.mostrar(
+                    "Confirmação",
+                    pergunta,
+                    () -> {
+                        if (produto == null) {
+                            int id = productService.gerarNovoId();
+                            Produto novo = new Produto(
+                                    id,
+                                    nomeStr,
+                                    descStr,
+                                    categStr,
+                                    Double.parseDouble(precoStr),
+                                    Integer.parseInt(qtdStr));
+                            productService.adicionar(novo);
+                            produtos.add(novo);
+                        } else {
+                            produto.setNome(nomeStr);
+                            produto.setDescricao(descStr);
+                            produto.setCategoria(categStr);
+                            produto.setPreco(Double.parseDouble(precoStr));
+                            produto.setQuantidade(Integer.parseInt(qtdStr));
+                            productService.atualizar(produto);
+                            int idx = produtos.indexOf(produto);
+                            produtos.set(idx, produto);
+                        }
+                        stage.close();
+                    }
+            );
         });
 
         VBox vbox = new VBox(8,
@@ -202,5 +252,12 @@ public class ProdutoView {
 
         stage.setScene(new Scene(form, 350, 400));
         stage.showAndWait();
+    }
+    private void exibirErro(String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro de Validação");
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }
