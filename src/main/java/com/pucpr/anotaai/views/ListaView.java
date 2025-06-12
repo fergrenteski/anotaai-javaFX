@@ -61,7 +61,6 @@ public class ListaView {
                 });
             }
         });
-
         HBox buttonBox = new HBox(10, removerBtn, editarBtn);
 
         layout.getChildren().addAll(title, addBox, listView, buttonBox);

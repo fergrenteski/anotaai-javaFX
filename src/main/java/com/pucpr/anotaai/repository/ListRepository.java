@@ -12,7 +12,6 @@ public class ListRepository {
         File dir = new File("upload");
         if (!dir.exists()) dir.mkdirs();
     }
-
     @SuppressWarnings("unchecked")
     public java.util.List<List> carregar() {
         if (!arquivo.exists()) return new ArrayList<>();

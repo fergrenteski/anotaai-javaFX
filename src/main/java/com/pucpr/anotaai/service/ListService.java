@@ -28,7 +28,6 @@ public class ListService {
             listas.add(nome);
         }
     }
-
     public boolean removerLista(String nome) {
         return listas.remove(nome);
     }
