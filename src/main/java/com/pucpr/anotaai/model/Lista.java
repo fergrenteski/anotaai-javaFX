@@ -1,18 +1,19 @@
 package com.pucpr.anotaai.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
-public class List implements Serializable {
+public class Lista implements Serializable {
     private int id;
-    private String nome;          // nome da pessoa/responsável
+    private String nomeResp;      // nomeResp da pessoa/responsável
     private String nomeLista;     // novo campo
     private String categoria;     // novo campo
-    private String dataCriacao;   // novo campo
+    private LocalDate dataCriacao;   // novo campo
 
-    public List(int id, String nome, String nomeLista, String categoria, String dataCriacao) {
+    public Lista(int id, String nomeLista, String categoria, String nomeResp, LocalDate dataCriacao) {
         this.id = id;
-        this.nome = nome;
         this.nomeLista = nomeLista;
+        this.nomeResp = nomeResp;
         this.categoria = categoria;
         this.dataCriacao = dataCriacao;
     }
@@ -21,11 +22,11 @@ public class List implements Serializable {
     }
 
     public String getNome() {
-        return nome;
+        return nomeResp;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNome(String nomeResp) {
+        this.nomeResp = nomeResp;
     }
 
     public String getNomeLista() {
@@ -44,11 +45,11 @@ public class List implements Serializable {
         this.categoria = categoria;
     }
 
-    public String getDataCriacao() {
+    public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(String dataCriacao) {
+    public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 }
