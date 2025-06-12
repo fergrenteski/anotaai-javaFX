@@ -101,6 +101,10 @@ public class GrupoView {
                     ? "Deseja salvar o grupo '" + nome + "'?"
                     : "Deseja atualizar o grupo '" + nome + "'?";
 
+            if (nomeField.getText().isEmpty() || descField.getText().isEmpty() || catField.getText().isEmpty()) {
+                throw new IllegalArgumentException("Todos os campos são obrigatórios");
+            }
+
             ModalConfirmacao.mostrar("Confirmação", mensagem, () -> {
                 if (grupo == null) {
                     Grupo novo = new Grupo(grupoService.gerarNovoId(), nomeField.getText(), descField.getText(), catField.getText());
@@ -119,9 +123,9 @@ public class GrupoView {
         });
 
         VBox form = new VBox(10,
-                new Label("Nome:"), nomeField,
-                new Label("Descrição:"), descField,
-                new Label("Categoria:"), catField,
+                new Label("Nome:*"), nomeField,
+                new Label("Descrição:*"), descField,
+                new Label("Categoria:*"), catField,
                 salvarBtn
         );
         form.setPadding(new Insets(20));

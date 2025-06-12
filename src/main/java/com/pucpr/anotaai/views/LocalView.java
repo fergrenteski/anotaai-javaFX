@@ -174,12 +174,12 @@ public class LocalView {
         });
 
         VBox form = new VBox(10,
-                new Label("Nome:"), nomeField,
-                new Label("Endereço:"), enderecoField,
-                new Label("Cidade:"), cidadeField,
-                new Label("Estado:"), estadoField,
-                new Label("CEP (somente números, 8 dígitos):"), cepField,
-                new Label("Telefone (somente números, 10 ou 11 dígitos):"), telefoneField,
+                new Label("Nome:*"), nomeField,
+                new Label("Endereço:*"), enderecoField,
+                new Label("Cidade:*"), cidadeField,
+                new Label("Estado:*"), estadoField,
+                new Label("CEP (somente números, 8 dígitos):*"), cepField,
+                new Label("Telefone (somente números, 10 ou 11 dígitos):*"), telefoneField,
                 salvarBtn
         );
         form.setPadding(new Insets(20));

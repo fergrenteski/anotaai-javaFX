@@ -112,6 +112,11 @@ public class ListaView {
                         ? "Tem certeza que deseja salvar o lista '" + nome + "'?"
                         : "Tem certeza que deseja atualizar o lista '" + nome + "'?";
 
+
+                if (nome.isEmpty() || cat.isEmpty() || nomeResp.isEmpty()) {
+                    throw new IllegalArgumentException("Todos os campos são obrigatórios.");
+                }
+
                 ModalConfirmacao.mostrar(
                         "Confirmação",
                         mensagem,
@@ -140,9 +145,9 @@ public class ListaView {
         });
 
         VBox form = new VBox(10,
-                new Label("Nome:"), nomeField,
-                new Label("Categoria:"), catField,
-                new Label("Nome Resp.:"), nomeRespField,
+                new Label("Nome:*"), nomeField,
+                new Label("Categoria:*"), catField,
+                new Label("Nome Resp.:*"), nomeRespField,
                 salvarBtn
         );
         form.setPadding(new Insets(20));

@@ -116,6 +116,24 @@ public class UserView {
                         ? "Tem certeza que deseja salvar o user '" + nomeUser + "'?"
                         : "Tem certeza que deseja atualizar o user '" + nomeUser + "'?";
 
+
+                if (nomeField.getText().isEmpty() || biografiaField.getText().isEmpty() || cpfField.getText().isEmpty() ||  emailField.getText().isEmpty() || dataNascimentoField.getText().isEmpty()) {
+                    throw new IllegalArgumentException("Todos os campos são obrigatórios.");
+                }
+
+                if (!cpfField.getText().matches("\\d{11}")) {
+                    throw new IllegalArgumentException("CPF deve conter 11 dígitos.");
+                }
+
+                if (!dataNascimentoField.getText().matches("^\\d{2}/\\d{2}/\\d{4}$")) {
+                    throw new IllegalArgumentException("Data deve estar no formato dd/mm/aaaa.");
+                }
+
+                if (!emailField.getText().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+                    throw new IllegalArgumentException("Email inválido.");
+                }
+
+
                 ModalConfirmacao.mostrar(
                         "Confirmação",
                         mensagem,
@@ -156,9 +174,9 @@ public class UserView {
         VBox form = new VBox(10,
                 new Label("Nome:"), nomeField,
                 new Label("Biografia:"), biografiaField,
-                new Label("Cpf:"), cpfField,
+                new Label("Cpf: (11 Dígitos)"), cpfField,
                 new Label("Email:"), emailField,
-                new Label("DataNascimento:"), dataNascimentoField,
+                new Label("DataNascimento: (Formato: XX/XX/XXXX)"), dataNascimentoField,
 
                 salvarBtn
         );
