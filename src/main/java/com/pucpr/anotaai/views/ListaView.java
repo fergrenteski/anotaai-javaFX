@@ -30,7 +30,6 @@ public class ListaView {
                 novaListaField.clear();
             }
         });
-
         HBox addBox = new HBox(10, novaListaField, adicionarBtn);
 
         // ListView para mostrar as listas

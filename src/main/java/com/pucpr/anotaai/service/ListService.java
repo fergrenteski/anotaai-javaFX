@@ -44,7 +44,6 @@ public class ListService {
         }
         return false;
     }
-
     public void limparListas() {
         listas.clear();
     }
