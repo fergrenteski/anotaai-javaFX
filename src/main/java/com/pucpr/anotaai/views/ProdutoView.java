@@ -132,19 +132,19 @@ public class ProdutoView {
         stage.setTitle(produto == null ? "Novo Produto" : "Editar Produto");
 
         // Labels e campos de texto
-        Label labNome      = new Label("Nome:");
+        Label labNome      = new Label("Nome:*");
         TextField txtNome      = new TextField( produto != null ? produto.getNome() : "" );
 
-        Label labDescricao = new Label("Descrição:");
+        Label labDescricao = new Label("Descrição:*");
         TextField txtDescricao = new TextField( produto != null ? produto.getDescricao() : "" );
 
-        Label labCategoria = new Label("Categoria:");
+        Label labCategoria = new Label("Categoria:*");
         TextField txtCategoria = new TextField( produto != null ? produto.getCategoria() : "" );
 
-        Label labPreco     = new Label("Preço:");
+        Label labPreco     = new Label("Preço:*");
         TextField txtPreco     = new TextField( produto != null ? String.valueOf(produto.getPreco()) : "" );
 
-        Label labQuantidade = new Label("Quantidade:");
+        Label labQuantidade = new Label("Quantidade:*");
         TextField txtQuantidade = new TextField( produto != null ? String.valueOf(produto.getQuantidade()) : "" );
 
         Button btnVoltar = new Button("Voltar");
