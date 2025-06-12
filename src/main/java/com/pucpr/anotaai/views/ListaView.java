@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ListaView {
-    private ListService listService = ListService.getInstance();
+    private final ListService listService = ListService.getInstance();
 
     public void start(Stage stage) {
         VBox layout = new VBox(10);
@@ -30,12 +30,12 @@ public class ListaView {
                 novaListaField.clear();
             }
         });
-
         HBox addBox = new HBox(10, novaListaField, adicionarBtn);
 
         // ListView para mostrar as listas
-        ListView<String> listView = new ListView<>(listService. getListas());
+        ListView<String> listView = new ListView<>(listService.getListas());
 
+        // Botão para remover
         Button removerBtn = new Button("Remover Selecionado");
         removerBtn.setOnAction(e -> {
             String selected = listView.getSelectionModel().getSelectedItem();
@@ -44,7 +44,26 @@ public class ListaView {
             }
         });
 
-        layout.getChildren().addAll(title, addBox, listView, removerBtn);
+        // Botão para editar
+        Button editarBtn = new Button("Editar Selecionado");
+        editarBtn.setOnAction(e -> {
+            String selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                TextInputDialog dialog = new TextInputDialog(selected);
+                dialog.setTitle("Editar Lista");
+                dialog.setHeaderText("Editar nome da lista");
+                dialog.setContentText("Novo nome:");
+
+                dialog.showAndWait().ifPresent(novoNome -> {
+                    if (!novoNome.trim().isEmpty()) {
+                        listService.editarLista(selected, novoNome);
+                    }
+                });
+            }
+        });
+        HBox buttonBox = new HBox(10, removerBtn, editarBtn);
+
+        layout.getChildren().addAll(title, addBox, listView, buttonBox);
 
         stage.setScene(new Scene(layout, 400, 300));
         stage.setTitle("Listas");
