@@ -1,51 +1,54 @@
 package com.pucpr.anotaai.model;
 
-import java.time.LocalDate;
+import java.io.Serializable;
 
-public class List {
+public class List implements Serializable {
     private int id;
-    private String name;
-    private LocalDate creationDate;
-    private int userId;
+    private String nome;          // nome da pessoa/responsável
+    private String nomeLista;     // novo campo
+    private String categoria;     // novo campo
+    private String dataCriacao;   // novo campo
 
-    public List() {}
-
-    public List(int id, String name, LocalDate creationDate, int userId) {
+    public List(int id, String nome, String nomeLista, String categoria, String dataCriacao) {
         this.id = id;
-        this.name = name;
-        this.creationDate = creationDate;
-        this.userId = userId;
+        this.nome = nome;
+        this.nomeLista = nomeLista;
+        this.categoria = categoria;
+        this.dataCriacao = dataCriacao;
     }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getNome() {
+        return nome;
     }
 
-    public String getName() {
-        return name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getNomeLista() {
+        return nomeLista;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    public void setNomeLista(String nomeLista) {
+        this.nomeLista = nomeLista;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public int getUserId() {
-        return userId;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
-    private void setUserId(int userId) {
-        this.userId = userId;
+    public String getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(String dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }
